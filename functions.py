@@ -5,10 +5,11 @@ import math
 
 WINDOW_HEIGHT   = 500
 WINDOW_WIDTH    = 500
-X, Y, W, H      = 0, 0, 200, 200
+X, Y, Z, W, H   = 0, 0, 0, 200, 200
 ROTATION        = 0
 AXIS            = 'z'
 SCALE           = 2
+SPINING         = False
 
 def translate(x, y, z):
     matrix = [
@@ -70,6 +71,13 @@ def drawSquare(x, y, width, height = None):
     glVertex2f(x,           y + height)
     glEnd()
 
+def drawCube(pos_x, pos_y, pos_z, size=1.0, color=[0.0, 0.0, 0.0]):
+    glColor3f(color[0], color[1], color[2])
+    glPushMatrix()                    # Duplica a matriz atual
+    glTranslatef(pos_x, pos_y, pos_z)  # Rotaciona a matriz atual
+    glutWireCube(size)
+    glPopMatrix()              
+
 def reshape(width, height):
     glViewport(0, 0, GLsizei(width), GLsizei(height))
     glMatrixMode(GL_PROJECTION)
@@ -81,13 +89,14 @@ def reshape(width, height):
     glMatrixMode (GL_MODELVIEW)
 
 def display():
-    global ROTATION, X, Y, W, H, SCALE, AXIS
+    global ROTATION, X, Y, Z, W, H, SCALE, AXIS
     glClearColor(1.0, 1.0, 1.0, 0.0)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glColor3f(0.0, 0.0, 0.0)
     glLoadIdentity()
 
-    ROTATION += 0.1
+    if SPINING:
+        ROTATION += 0.1
 
     # scale(X, Y, 0, SCALE)
     # rotate(X, Y, 0, ROTATION, 'z')
@@ -96,39 +105,49 @@ def display():
     y = 1 if AXIS == 'y' else 0
     z = 1 if AXIS == 'z' else 0
     # glutSwapBuffers()
+    glShadeModel(GL_SMOOTH);
 
     # MATRIX é uma lista de configurações
-
-    glPushMatrix()                    # Duplica a matriz atual
-    glTranslatef(0.0, 0.0, -6.0)      # Rotaciona a matriz atual
-    glRotatef(ROTATION, 1, 1, 1)
+    glPushMatrix()                      # Duplica a matriz atual
+    glTranslatef(X, Y, Z-6.0)           # Rotaciona a matriz atual
+    #glRotatef(ROTATION, x, y, z)
+    rotate(x, y, z, ROTATION, AXIS)
 
     # Cubo do centro
-    glPushMatrix()                    # Duplica a matriz atual
-    glTranslatef(0.0+X, 0.0+Y, -3.0)  # Rotaciona a matriz atual
-    glutSolidSphere(1.0, 100, 100)    # A partir da matriz atual, desenha um cubo
-    glPopMatrix()                     # Remova a matriz atual
+    # glPushMatrix()                    # Duplica a matriz atual
+    # glTranslatef(0.0+X, 0.0+Y, -3.0)  # Rotaciona a matriz atual
+    # glutSolidSphere(1.0, 100, 100)    # A partir da matriz atual, desenha um cubo
+    # glPopMatrix()                     # Remova a matriz atual
 
-    # Direita
-    glPushMatrix()
-    glTranslatef(2.0+X, 0.0+Y, -3.0)
-    glutWireCube(1.0)
+    # # Direita
+    # glPushMatrix()
+    # glTranslatef(2.0+X, 0.0+Y, -3.0)
+    # glutWireCube(1.0)
+    # glPopMatrix()
+
+    # # Esquerda
+    # glPushMatrix()
+    # glTranslatef(-2.0+X, 0.0+Y, -3.0)
+    # glutWireCube(1.0)
+    # glPopMatrix()
+
+    drawCube(-1, -1, 0)
+    drawCube(-1, 0, 0)
+    drawCube(0, -1, 0)
+    drawCube(0, 0, 0)
+    drawCube(0, 1, 0)
+    drawCube(1, 1, 0)
+    drawCube(1, 0, 0)
+    drawCube(1, -1, 0)
+    drawCube(-1, 1, 0)
+
     glPopMatrix()
 
-    # Esquerda
-    glPushMatrix()
-    glTranslatef(-2.0+X, 0.0+Y, -3.0)
-    glutWireCube(1.0)
-    glPopMatrix()
-
-
-    glPopMatrix()
 
     glFlush ()
 
 def keyPressed(key, x, y):
-    global ROTATION, X, Y, W, H, SCALE, AXIS
-    print(f'{key} - {key[0]}')
+    global X, Y, Z, W, H, SCALE, AXIS, SPINING
     if key[0] == 97:        # A
         X -= 0.1
     elif key[0] == 100:     # D
@@ -138,13 +157,15 @@ def keyPressed(key, x, y):
     elif key[0] == 115:     # W
         Y -= 0.1
     elif key[0] == 101:     # E
-        ROTATION += 10
+        Z += 0.1
     elif key[0] == 113:     # Q 
-        ROTATION -= 10
+        Z -= 0.1
     elif key[0] == 122:     # Z
         SCALE -= 0.1
     elif key[0] == 120:     # X
         SCALE += 0.1
+    elif key[0] == 118:     # V
+        SPINING = not SPINING
     elif key[0] == 99:      # C
         if AXIS == 'z':
             AXIS = 'x'
@@ -154,6 +175,15 @@ def keyPressed(key, x, y):
             AXIS = 'z'
 
 def main():
+    print('Inicializando...')
+    print('\nTeclas:')
+    print('[ A / D ]\tMover eixo X')
+    print('[ w / s ]\tMover eixo y')
+    print('[ E / Q ]\tMover eixo Z')
+    print('[ Z / X ]\tAumentar/Diminuir escala')
+    print('[ V ]\t\tLigar/Desligar rotação')
+    print('[ C ]\t\tAlterar eixo de rotação')
+
     glutInit()
     glutInitDisplayMode(GLUT_RGBA)
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT)
