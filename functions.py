@@ -141,11 +141,11 @@ def keyPressed(key, x, y):
         ROTATION += 10
     elif key[0] == 113:     # Q 
         ROTATION -= 10
-    elif key[0] == 122:      # Z
+    elif key[0] == 122:     # Z
         SCALE -= 0.1
-    elif key[0] == 120:      # X
+    elif key[0] == 120:     # X
         SCALE += 0.1
-    elif key[0] == 99:       # C
+    elif key[0] == 99:      # C
         if AXIS == 'z':
             AXIS = 'x'
         elif AXIS == 'x':
