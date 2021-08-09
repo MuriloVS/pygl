@@ -52,18 +52,7 @@ def rotate(x, y, z, angle, axis):
     else:
         return print(f'Rotate({x}, {y}, {z}, {angle}, {axis}) - Undefined axis')
     glMultMatrixf(matrix)
-    return translate(-x, -y, -z)
-
-def drawFloor():
-    glPushMatrix()
-    glColor3f(0.0, 1.0, 0.0)
-    glBegin(GL_POLYGON)
-    glVertex3f(-60.0,   -0.5, -60.0)
-    glVertex3f(60.0,    -0.5, -60.0)
-    glVertex3f(60.0,    -0.5, 60.0)
-    glVertex3f(-60.0,   -0.5, 60.0)
-    glEnd()
-    glPopMatrix()       
+    return translate(-x, -y, -z)    
 
 class Cube:
     def __init__(self, position_x, position_y, position_z, size, color=[0.0, 0.0, 0.0]):
@@ -149,6 +138,9 @@ class Window:
         # Definindo e habilitando modo de coloração
         glColorMaterial(GL_FRONT, GL_DIFFUSE);
         glEnable(GL_COLOR_MATERIAL);
+        # Permitindo a mistura de cores e opacidade
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     def configureGlutEvents(self):       
         glutDisplayFunc(self.glutDisplay)
@@ -159,6 +151,58 @@ class Window:
         glutMotionFunc(self.glutMouseMove)
         glutMainLoop()
     
+    def drawMinimap(self):
+        glPushMatrix()
+
+        glDisable(GL_LIGHTING)
+        glDisable(GL_LIGHT0)
+
+        map_max = 9
+
+        size = 0.1
+        dist = 0.52
+        glTranslatef(-0.4, +0.4, 0.0)
+        glColor([0.0, 0.0, 0.0, 0.75])
+        glBegin(GL_POLYGON)
+        glVertex3f(-size , -size, -dist)
+        glVertex3f(-size , size, -dist)
+        glVertex3f(size , size, -dist)
+        glVertex3f(size , -size, -dist)
+        glEnd()
+
+        player_x = (self.position['x']/map_max)*size
+        player_y = -(self.position['z']/map_max)*size
+
+        dist = 0.51
+        dot_size = 0.005
+        glColor([1.0, 1.0, 1.0, 1])
+        glBegin(GL_POLYGON)
+        glVertex3f(player_x-dot_size , player_y-dot_size, -dist)
+        glVertex3f(player_x-dot_size , player_y+dot_size, -dist)
+        glVertex3f(player_x+dot_size , player_y+dot_size, -dist)
+        glVertex3f(player_x+dot_size , player_y-dot_size, -dist)
+        glEnd()
+
+        for obj in self.objects:
+            dot_size = 0.01 * obj.size
+            obj_x = (obj.position_x/map_max)*size
+            obj_y = -(obj.position_z/map_max)*size
+            color = [obj.color[0]+0.2, obj.color[1]+0.2, obj.color[2]+0.2]
+            glColor(color)
+            glBegin(GL_POLYGON)
+            glVertex3f(obj_x-dot_size , obj_y-dot_size, -dist)
+            glVertex3f(obj_x-dot_size , obj_y+dot_size, -dist)
+            glVertex3f(obj_x+dot_size , obj_y+dot_size, -dist)
+            glVertex3f(obj_x+dot_size , obj_y-dot_size, -dist)
+            glEnd()
+
+
+        glEnable(GL_LIGHTING)
+        glEnable(GL_LIGHT0)
+
+        glPopMatrix()
+
+
     def glutDisplay(self):
         self.glutMovement()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) 
@@ -171,7 +215,15 @@ class Window:
         glTranslatef(-self.position['x']*2, -self.position['y']*2, -self.position['z']*2) 
         rotate(self.position['x'], self.position['y'], self.position['z'], self.rotation, 'y')
 
-        drawFloor()
+        glPushMatrix()
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_POLYGON)
+        glVertex3f(-60.0,   -0.5, -60.0)
+        glVertex3f(60.0,    -0.5, -60.0)
+        glVertex3f(60.0,    -0.5, 60.0)
+        glVertex3f(-60.0,   -0.5, 60.0)
+        glEnd()
+        glPopMatrix()
 
         for obj in self.objects:
             in_x = self.position['x'] < obj.position_x + obj.size*1.5 and self.position['x'] > obj.position_x - obj.size*1.5
@@ -187,6 +239,8 @@ class Window:
 
         glPopMatrix()
         glPopMatrix()
+        self.drawMinimap()
+
         glutSwapBuffers()
 
     def glutReshape(self, width, height):
@@ -211,20 +265,14 @@ class Window:
 
     def glutMovement(self):
 
-
-        if(self.jump_buffer > 0):
-            if(self.jump_buffer >= 750):
-                self.position['y'] += 0.015 * self.jump_buffer/1000
-            else:
-                if(self.position['y'] > 0):
-                    self.position['y'] -= 0.0035 * 1000/self.jump_buffer
-            if(self.position['y'] > 0):
-                self.jump_buffer -= 1
-            else:
+        if self.jump_buffer > 0:
+            self.position['y'] += 0.015 * self.jump_buffer/800 if self.jump_buffer > 600 else - 0.010 * 800/self.jump_buffer
+            self.jump_buffer -= 1
+            if self.position['y'] <= 0:
+                self.position['y'] = 0
                 self.jump_buffer = 0
-
-        self.jump_buffer = 1000 if (b' ' in self.key_buffer and self.jump_buffer == 0) else self.jump_buffer
-
+        
+        self.jump_buffer = 800 if (b' ' in self.key_buffer and self.jump_buffer <= 0) else self.jump_buffer
 
         self.rotation = self.rotation - 360 if self.rotation > 360 else self.rotation
 
@@ -234,7 +282,7 @@ class Window:
         self.position['z'] -= vertical_movement * math.cos(math.radians(self.rotation)) + horizontal_movement * math.sin(math.radians(self.rotation))
 
         #self.position['y']  -= (0.002)    if (b'z' in self.key_buffer) else (-0.002)    if (b'x' in self.key_buffer) else 0 
-        self.rotation       += (0.1)     if (b'q' in self.key_buffer) else (-0.1)     if (b'e' in self.key_buffer) else 0 
+        self.rotation       += (0.15)     if (b'q' in self.key_buffer) else (-0.15)     if (b'e' in self.key_buffer) else 0 
 
     def addObject(self, obj):
         self.objects.append(obj)
@@ -257,6 +305,12 @@ cube_05 = Cube(2.0, 0.0, -2.0, 0.75, COLORS['BLUE'])
 window.objects.append(cube_05)
 
 cube_06 = Cube(-2.0, 0.0, -2.0, 0.75, COLORS['BLUE'])
+window.objects.append(cube_06)
+
+cube_06 = Cube(0.0, 0.0, 2.0, 0.75, COLORS['WHITE'])
+window.objects.append(cube_06)
+
+cube_06 = Cube(0.0, 0.0, 4.0, 0.75, COLORS['WHITE'])
 window.objects.append(cube_06)
 
 window.configureOpenGl()
