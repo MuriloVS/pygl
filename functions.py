@@ -5,11 +5,16 @@ import math
 
 WINDOW_HEIGHT   = 500
 WINDOW_WIDTH    = 500
-X, Y, Z, W, H   = 0, 0, 0, 200, 200
+X, Y, Z, W, H   = 0, 0, -6, 200, 200
 ROTATION        = 0
 AXIS            = 'z'
 SCALE           = 2
 SPINING         = False
+COLORS          = {
+    'RED':      [1, 0, 0],
+    'BLUE':     [0, 0, 1],
+    'GREEN':    [0, 1, 0],
+}
 
 def translate(x, y, z):
     matrix = [
@@ -75,76 +80,62 @@ def drawCube(pos_x, pos_y, pos_z, size=1.0, color=[0.0, 0.0, 0.0]):
     glColor3f(color[0], color[1], color[2])
     glPushMatrix()                    # Duplica a matriz atual
     glTranslatef(pos_x, pos_y, pos_z)  # Rotaciona a matriz atual
-    glutWireCube(size)
-    glPopMatrix()              
+    glutSolidCube(size)
+    glPopMatrix()           
 
 def reshape(width, height):
     glViewport(0, 0, GLsizei(width), GLsizei(height))
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    #glOrtho(0.0, 500, 0.0, 500, 0.0, 1.0)
-    #glFrustum(-3.0, 3.0, -3.0, 3.0, 2, 30.0) #Para testes com objetos 3D dá p usar o exercício
     glFrustum (-1.0, 1.0, -1.0, 1.0, 0.5, 10)
-    #glOrtho(-4.0, 4.0, -4.0, 4.0, 2, 30.0) #da aula para praticar - parâmetros já ajustados
-    glMatrixMode (GL_MODELVIEW)
+    # if (width <= height):
+    #     glOrtho (-1.5, 1.5, -1.5*height/width, 1.5*height/width, -20.0, 1.0);
+    # else:
+    #     glOrtho (-1.5*width/height, 1.5*width/height, -1.5, 1.5, -20.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    # glShadeModel(GL_SMOOTH)
+    # glEnable(GL_LIGHTING)
+    # glEnable(GL_LIGHT0)
+    # glEnable(GL_DEPTH_TEST)
+    # glEnable(GL_CULL_FACE)
+    # glCullFace(GL_BACK)
+    # glFrontFace(GL_CW)
+    # # #glOrtho(0.0, 500, 0.0, 500, 0.0, 1.0)
+    # # #glFrustum(-3.0, 3.0, -3.0, 3.0, 2, 30.0) #Para testes com objetos 3D dá p usar o exercício
+    # # glFrustum (-1.0, 1.0, -1.0, 1.0, 0.5, 10)
+    # # #glOrtho(-4.0, 4.0, -4.0, 4.0, 2, 30.0) #da aula para praticar - parâmetros já ajustados
+    # # glMatrixMode (GL_MODELVIEW)
+
+    # gluPerspective(70.0, width/height, 0.5, 10.0);
+    # glMatrixMode(GL_MODELVIEW)
+    # glLoadIdentity()
 
 def display():
     global ROTATION, X, Y, Z, W, H, SCALE, AXIS
-    glClearColor(0, 0, 0, 0.0)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glColor3f(0.0, 0.0, 0.0)
-    glLoadIdentity()
 
     if SPINING:
         ROTATION += 0.1
-
-    # scale(X, Y, 0, SCALE)
-    # rotate(X, Y, 0, ROTATION, 'z')
-    # drawSquare(X, Y, W, H)
+        
     x = 1 if AXIS == 'x' else 0
     y = 1 if AXIS == 'y' else 0
     z = 1 if AXIS == 'z' else 0
-    # glutSwapBuffers()
-    glShadeModel(GL_SMOOTH);
 
     # MATRIX é uma lista de configurações
-    glPushMatrix()                      # Duplica a matriz atual
-    glTranslatef(X, Y, Z-6.0)           # Rotaciona a matriz atual
-    #glRotatef(ROTATION, x, y, z)
+    glPushMatrix()                      
+    glTranslatef(X, Y, Z)  
     rotate(x, y, z, ROTATION, AXIS)
 
-    # Cubo do centro
-    # glPushMatrix()                    # Duplica a matriz atual
-    # glTranslatef(0.0+X, 0.0+Y, -3.0)  # Rotaciona a matriz atual
-    # glutSolidSphere(1.0, 100, 100)    # A partir da matriz atual, desenha um cubo
-    # glPopMatrix()                     # Remova a matriz atual
-
-    # # Direita
-    # glPushMatrix()
-    # glTranslatef(2.0+X, 0.0+Y, -3.0)
-    # glutWireCube(1.0)
-    # glPopMatrix()
-
-    # # Esquerda
-    # glPushMatrix()
-    # glTranslatef(-2.0+X, 0.0+Y, -3.0)
-    # glutWireCube(1.0)
-    # glPopMatrix()
-
-    drawCube(-1, -1, 0, 2, [.5, 0, 0])
-    drawCube(-1, 0, 0, 1.5, [1, 0, 0])
-    drawCube(0, -1, 0, 1, [1, .5, 0])
-    drawCube(0, 0, 0, .5, [1, 1, 0])
-    drawCube(0, 1, 0, 1, [1, 1, .5])
-    drawCube(1, 1, 0, 1.5, [1, 1, 1])
-    drawCube(1, 0, 0, 2, [1, 1, .5])
-    drawCube(1, -1, 0, 1.5, [1, .5, 0])
-    drawCube(-1, 1, 0, 1, [.5, 0, 0])
+    drawCube(-2,    -2,     0,      1,  COLORS["RED"])
+    drawCube(-1,    -1,     0,      1,  COLORS["GREEN"])
+    drawCube(0,     0,      0,      1,  COLORS["BLUE"])
+    drawCube(1,     1,      0,      1,  COLORS["RED"])
+    drawCube(2,     2,      0,      1,  COLORS["GREEN"])
 
     glPopMatrix()
 
-
-    glFlush ()
+    glFlush()
 
 def keyPressed(key, x, y):
     global X, Y, Z, W, H, SCALE, AXIS, SPINING
@@ -174,6 +165,25 @@ def keyPressed(key, x, y):
         elif AXIS == 'y':
             AXIS = 'z'
 
+def init():
+    diffuseMaterial = [ 0.5, 0.5, 0.5, 1.0 ]
+    mat_specular    = [ 1.0, 1.0, 1.0, 1.0 ]
+    light_position  = [ 1.0, 1.0, 1.0, 0.0 ]
+
+    glClearColor (0.0, 0.0, 0.0, 0.0)
+    glShadeModel (GL_SMOOTH)
+    glEnable(GL_DEPTH_TEST)
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseMaterial)
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular)
+    glMaterialf(GL_FRONT, GL_SHININESS, 25.0)
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+    glEnable(GL_LIGHTING)
+    glEnable(GL_LIGHT0)
+
+    glColorMaterial(GL_FRONT, GL_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+
+
 def main():
     print('Inicializando...')
     print('\nTeclas:')
@@ -184,18 +194,39 @@ def main():
     print('[ V ]\t\tLigar/Desligar rotação')
     print('[ C ]\t\tAlterar eixo de rotação')
 
+    # glutInit()
     glutInit()
-    glutInitDisplayMode(GLUT_RGBA)
-    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT)
-    glutInitWindowPosition(0, 0)
-    wind = glutCreateWindow("OpenGL Coding Practice")
-
+    glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH)
+    glutInitWindowSize (500, 500)
+    glutInitWindowPosition (100, 100)
+    glutCreateWindow("OpenGL Coding Practice")
+    init ()
     glutDisplayFunc(display)
     glutIdleFunc(display)
     glutReshapeFunc(reshape)
     glutKeyboardFunc(keyPressed)
-
     glutMainLoop()
+
+
+
+    # glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH)
+    # glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+    # glutInitWindowPosition(0, 0)
+    # wind = glutCreateWindow("OpenGL Coding Practice")
+
+    # mat_specular = [ 1.0, 1.0, 1.0, 1.0 ]
+    # mat_shininess = [ 50.0 ]
+    # light_position = [ 1.0, 1.0, 1.0, 0.0 ]
+    # glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular)
+    # glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess)
+    # glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+
+    # glutDisplayFunc(display)
+    # glutIdleFunc(display)
+    # glutReshapeFunc(reshape)
+    # glutKeyboardFunc(keyPressed)
+
+    # glutMainLoop()
     return
 
 main()
