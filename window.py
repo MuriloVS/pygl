@@ -276,10 +276,14 @@ class Window:
 
         self.rotation = self.rotation - 360 if self.rotation > 360 else self.rotation
 
-        horizontal_movement = 0.002 if (b'a' in self.key_buffer) else -0.002 if (b'd' in self.key_buffer) else 0
+        print(self.rotation)
+
+        # 0 - 90 : normal / 90 - 180: invertido / 180 - 270: normal / 270 - 360: invertido
+
+        horizontal_movement = 0#0.002 if (b'a' in self.key_buffer) else -0.002 if (b'd' in self.key_buffer) else 0
         vertical_movement   = 0.002 if (b'w' in self.key_buffer) else -0.002 if (b's' in self.key_buffer) else 0
-        self.position['x'] -= horizontal_movement * math.cos(math.radians(self.rotation)) + vertical_movement * math.sin(math.radians(self.rotation))
-        self.position['z'] -= vertical_movement * math.cos(math.radians(self.rotation)) + horizontal_movement * math.sin(math.radians(self.rotation))
+        self.position['x'] -= vertical_movement * math.sin(math.radians(self.rotation))
+        self.position['z'] -= vertical_movement * math.cos(math.radians(self.rotation))
 
         #self.position['y']  -= (0.002)    if (b'z' in self.key_buffer) else (-0.002)    if (b'x' in self.key_buffer) else 0 
         self.rotation       += (0.15)     if (b'q' in self.key_buffer) else (-0.15)     if (b'e' in self.key_buffer) else 0 
