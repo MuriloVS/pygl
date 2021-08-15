@@ -19,7 +19,7 @@ SPINING = False
 
 
 def makeFrustum(l, r, b, t, n, f):
-    glLoadIdentity()
+    #glLoadIdentity()
     elem1 = (2*n)/(r-l)
     elem2 = (2*n)/(t-b)
     A = (r+l)/(r-l)
@@ -35,7 +35,7 @@ def makeFrustum(l, r, b, t, n, f):
 
 
 def makeOrtho(l, r, b, t, n, f):
-    glLoadIdentity()
+    #glLoadIdentity()
     elem1 = 2.0/(r-l)
     elem2 = 2.0/(t-b)
     elem3 = -2.0/(f-n)
@@ -104,7 +104,7 @@ def drawCube(pos_x, pos_y, pos_z, size=1.0, color=[0.0, 0.0, 0.0]):
     glColor3f(color[0], color[1], color[2])
     glPushMatrix()                    # Duplica a matriz atual
     glTranslatef(pos_x, pos_y, pos_z)  # Rotaciona a matriz atual
-    glutWireCube(size)
+    glutSolidCube(size)
     glPopMatrix()
 
 
@@ -124,21 +124,20 @@ def drawSquare(x, y, width, height=None):
 def reshape(width, height):  # Projeção
     glViewport(0, 0, GLsizei(width), GLsizei(height))
     glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
     # glOrtho(0.0, 500, 0.0, 500, 0.0, 1.0)
     # makeOrtho(0.0, 500, 0.0, 500, 0.0, 1.0)
     #glFrustum(-3.0, 3.0, -3.0, 3.0, 2, 30.0)
-    #makeFrustum(-1.0, 1.0, -1.0, 1.0, 0.5, 10)
-    makeOrtho(-10.0, 10.0, -10.0, 10.0, 0.0, 30)
+    makeFrustum(-1.0, 1.0, -1.0, 1.0, 0.5, 10)
+    #makeOrtho(-10.0, 10.0, -10.0, 10.0, 0.0, 30)
 
     glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
 
 
 def display():
     global ROTATION, X, Y, Z, W, H, SCALE, AXIS
-    glClearColor(0, 0, 0, 0.0)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glColor3f(0.0, 0.0, 0.0)
-    glLoadIdentity()
 
     if SPINING:
         ROTATION += 0.1
@@ -150,7 +149,6 @@ def display():
     y = 1 if AXIS == 'y' else 0
     z = 1 if AXIS == 'z' else 0
 
-    glShadeModel(GL_SMOOTH)
 
     # teste 2D (projeção, translação, rotação, escala)
     # drawSquare(x_inicial, y_inicial, tamanho)
@@ -162,15 +160,16 @@ def display():
     glPushMatrix()
     glTranslatef(X, Y, Z-6.0)
     makeRotate(x, y, z, ROTATION, AXIS)
-    drawCube(-1, -1, 0, 2, [.5, 0, 0])
-    drawCube(-1, 0, 0, 1.5, [1, 0, 0])
-    drawCube(0, -1, 0, 1, [1, .5, 0])
-    drawCube(0, 0, 0, .5, [1, 1, 0])
-    drawCube(0, 1, 0, 1, [1, 1, .5])
-    drawCube(1, 1, 0, 1.5, [1, 1, 1])
-    drawCube(1, 0, 0, 2, [1, 1, .5])
-    drawCube(1, -1, 0, 1.5, [1, .5, 0])
-    drawCube(-1, 1, 0, 1, [.5, 0, 0])
+    makeScale(0.0, 0.0, 0.0, SCALE)
+    drawCube(-1, -1, 0, -2,  [.5, 0, 0])
+    drawCube(-2, 0, 0, -1.5, [1, 0, 0])
+    drawCube(0, -2, 0, -1,   [1, .5, 0])
+    drawCube(0, 0, 0, -.5,   [1, 1, 0])
+    drawCube(0, 1, 0, -1,    [1, 1, .5])
+    drawCube(1, 1, 0, -1.5,  [1, 1, 1])
+    drawCube(1, 0, 0,-2,    [1, 1, .5])
+    drawCube(1, -1, 0, -1.5, [1, .5, 0])
+    drawCube(-1, 1, 0, -1,   [.5, 0, 0])
     glPopMatrix()
 
     glutSwapBuffers()
@@ -222,10 +221,17 @@ def manualKeyboard():
 def main():
 
     glutInit()
-    glutInitDisplayMode(GLUT_RGBA)
+    glutInitDisplayMode(GLUT_RGBA | GLUT_RGBA | GLUT_DEPTH)
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT)
     glutInitWindowPosition(0, 0)
     wind = glutCreateWindow("OpenGL Coding Practice")
+
+    glShadeModel(GL_SMOOTH)
+    glEnable(GL_DEPTH_TEST)
+    glColorMaterial(GL_FRONT, GL_DIFFUSE)
+    glMaterialf(GL_FRONT, GL_SHININESS, 5.0)
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.1, 0.1, 0.1, 1.0])
+    glEnable(GL_COLOR_MATERIAL)
 
     manualKeyboard()
 
