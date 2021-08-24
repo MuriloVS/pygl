@@ -10,6 +10,57 @@ COLORS = {
     'SKY':   [0.53, 0.81, 0.92]
 }
 
+def translate(x, y, z):
+    matrix = [
+        [1,     0,      0,      0],
+        [0,     1,      0,      0],
+        [0,     0,      1,      0],
+        [x,     y,      z,      1],
+    ]
+    return glMultMatrixf(matrix)
+
+def scale(x, y, z, s):
+    translate(x, y, z)
+    matrix = [
+        [s,     0,      0,      0],
+        [0,     s,      0,      0],
+        [0,     0,      s,      0],
+        [0,     0,      0,      1],
+    ]
+    glMultMatrixf(matrix)
+    return translate(-x, -y, -z)
+
+def rotate(x, y, z, angle, axis):
+    translate(x, y, z)
+    radians = math.radians(angle)
+    cos = math.cos(radians)
+    sin = math.sin(radians)
+    if axis == 'x':
+        matrix = [
+            [1,     0,      0,      0],
+            [0,     cos,    -sin,   0],
+            [0,     sin,    cos,    0],
+            [0,     0,      0,      1],
+        ]
+    elif axis == 'y':
+        matrix = [
+            [cos,   0,      sin,    0],
+            [0,     1,      0,      0],
+            [-sin,  0,      cos,    0],
+            [0,     0,      0,      1],
+        ]
+    elif axis == 'z':
+        matrix = [
+            [cos,   sin,    0,      0],
+            [-sin,  cos,    0,      0],
+            [0,     0,      1,      0],
+            [0,     0,      0,      1],
+        ]
+    else:
+        return print(f'Rotate({x}, {y}, {z}, {angle}, {axis}) - Undefined axis')
+    glMultMatrixf(matrix)
+    return translate(-x, -y, -z)
+
 class Window:
     def __init__(self, title, width, height, initialize=True):
         # Configurações da janela
@@ -171,11 +222,6 @@ class Window:
 
         for obj in self.objects:
             obj.draw(True)
-            # in_x = self.position['x'] < obj.position_x + obj.size*1.5 and self.position['x'] > obj.position_x - obj.size*1.5
-            # in_z = self.position['z'] < obj.position_z + obj.size*1.5 and self.position['z'] > obj.position_z - obj.size*1.5
-            # in_y = self.position['y'] < obj.position_y + obj.size*1.5 and self.position['y'] > obj.position_y - obj.size*1.5
-            # if not (in_x and in_z and in_y):
-            #     obj.draw(True)
 
         glPopMatrix()
         glPopMatrix()
@@ -219,8 +265,31 @@ class Window:
 
         horizontal_movement = 0.002 if (b'd' in self.key_buffer) else -0.002 if (b'a' in self.key_buffer) else 0
         vertical_movement   = 0.002 if (b'w' in self.key_buffer) else -0.002 if (b's' in self.key_buffer) else 0
-        self.position['x'] -= vertical_movement * math.sin(math.radians(self.rotation)) + horizontal_movement * math.sin(math.radians(self.rotation - 90))
-        self.position['z'] -= vertical_movement * math.cos(math.radians(self.rotation)) + horizontal_movement * math.cos(math.radians(self.rotation - 90))
+
+        x_movement = vertical_movement * math.sin(math.radians(self.rotation)) + horizontal_movement * math.sin(math.radians(self.rotation - 90))
+        z_movement = vertical_movement * math.cos(math.radians(self.rotation)) + horizontal_movement * math.cos(math.radians(self.rotation - 90))
+
+        can_walk_x = True
+        can_walk_z = True
+
+        # for obj in self.objects:
+        #     x = self.position['x'] + x_movement
+        #     z = self.position['z'] + z_movement
+        #     print(can_walk_x)
+        #     print(can_walk_z)
+        #     can_walk_x = can_walk_x and obj.colliding_x(x)
+        #     can_walk_z = can_walk_z and obj.colliding_z(z)
+
+        
+
+
+        self.position['x'] -= x_movement if can_walk_x == True else 0
+        self.position['z'] -= z_movement if can_walk_z == True else 0
+
+            # in_x = self.position['x'] < obj.position_x + obj.size*1.5 and self.position['x'] > obj.position_x - obj.size*1.5
+            # in_z = self.position['z'] < obj.position_z + obj.size*1.5 and self.position['z'] > obj.position_z - obj.size*1.5
+            # in_y = self.position['y'] < obj.position_y + obj.size*1.5 and self.position['y'] > obj.position_y - obj.size*1.5
+            # if not (in_x and in_z and in_y):
 
         #self.position['y']  -= (0.002)    if (b'z' in self.key_buffer) else (-0.002)    if (b'x' in self.key_buffer) else 0 
         self.rotation       += (0.15)     if (b'q' in self.key_buffer) else (-0.15)     if (b'e' in self.key_buffer) else 0 

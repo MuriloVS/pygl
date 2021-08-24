@@ -9,6 +9,7 @@ class Cylinder(Basic):
         self.size       = size
         self.color      = color
         self.height     = height
+        self.type       = 'cilinder'
 
     def draw(self, own_matrix):
         if own_matrix:

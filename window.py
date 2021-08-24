@@ -17,46 +17,6 @@ COLORS = {
     'SKY':   [0.53, 0.81, 0.92]
 }
 
-def translate(x, y, z):
-    matrix = [
-        [1,     0,      0,      0],
-        [0,     1,      0,      0],
-        [0,     0,      1,      0],
-        [x,     y,      z,      1],
-    ]
-    return glMultMatrixf(matrix)
-
-def rotate(x, y, z, angle, axis):
-    translate(x, y, z)
-    radians = math.radians(angle)
-    cos = math.cos(radians)
-    sin = math.sin(radians)
-    if axis == 'x':
-        matrix = [
-            [1,     0,      0,      0],
-            [0,     cos,    -sin,   0],
-            [0,     sin,    cos,    0],
-            [0,     0,      0,      1],
-        ]
-    elif axis == 'y':
-        matrix = [
-            [cos,   0,      sin,    0],
-            [0,     1,      0,      0],
-            [-sin,  0,      cos,    0],
-            [0,     0,      0,      1],
-        ]
-    elif axis == 'z':
-        matrix = [
-            [cos,   sin,    0,      0],
-            [-sin,  cos,    0,      0],
-            [0,     0,      1,      0],
-            [0,     0,      0,      1],
-        ]
-    else:
-        return print(f'Rotate({x}, {y}, {z}, {angle}, {axis}) - Undefined axis')
-    glMultMatrixf(matrix)
-    return translate(-x, -y, -z)    
-
 window = Window('OpenGL Practice', 500, 500)
 
 coluna_01 = Cylinder(0.0, 0.6, -1.0, 0.09, 1.5, COLORS['WHITE'])
@@ -77,10 +37,11 @@ window.objects.append(coluna_05)
 coluna_06 = Cylinder(0.0, 0.6, -4.0, 0.09, 1.5, COLORS['WHITE'])
 window.objects.append(coluna_06)
 
-pilar = Cylinder(0.0, 0.6, -2.5, 0.2, 1.5, COLORS['WHITE'])
+# X, Y, Z, RAIO, ALTURA, COR
+pilar = Cylinder(0.0, 1.1, -2.5, 0.45, 2.5, COLORS['WHITE'])
 window.objects.append(pilar)
 
-cone = Cone(0.0, 0.5, -2.5, 1.8, 1.8, COLORS['BROWN'])
+cone = Cone(0.0, 0.5, -2.5, 2.1, 0.8, COLORS['BROWN'])
 window.objects.append(cone)
 
 window.configureOpenGl()

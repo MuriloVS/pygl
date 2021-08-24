@@ -9,6 +9,7 @@ class Cone(Basic):
         self.size       = size
         self.color      = color
         self.height     = height
+        self.type       = 'cone'
 
     def draw(self, own_matrix):
         if own_matrix:
@@ -18,6 +19,7 @@ class Cone(Basic):
         glTranslatef(self.position_x, self.position_y, self.position_z)
         glRotatef(-90, 1.0, 0.0, 0.0)
         glutSolidCone(self.size, self.height, 10, 10)
+        # glutWireCone(self.size, self.height, 10, 10)
 
         if own_matrix:
             glPopMatrix()
