@@ -1,4 +1,6 @@
+import numpy
 from classes.basic import *
+from PIL import Image
 import math
 
 COLORS = {
@@ -80,6 +82,8 @@ class Window:
             "DIFUSE":   [0.1, 0.1, 0.1, 1.0],
             "SPECULAR": [0.1, 0.1, 0.1, 1.0]
         }
+        # Configurações de texturas
+        self.textures = []
         # Configurações próprias
         self.objects = []
         self.position = {
@@ -92,6 +96,14 @@ class Window:
         # Inicalização OpenGL
         if initialize:
             self.initialize()
+
+    def loadTextures(self):
+        grass_image = Image.open('grass.jpeg').convert('RGBA')
+        self.textures.append({
+            "height":   grass_image.height,
+            "width":    grass_image.width,
+            "data":     numpy.array(list(grass_image.getdata()), numpy.uint8)
+        });
 
     def initialize(self):
         # Inicializando Glut
@@ -124,6 +136,28 @@ class Window:
         # Permitindo a mistura de cores e opacidade
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        # # Configurações e habilitação de texturas
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        # glEnable(GL_TEXTURE_2D)
+        glDisable(GL_TEXTURE_GEN_S)
+        glDisable(GL_TEXTURE_GEN_T)
+
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+        texgen_s = [0.5, 0.0, 0.0, 0.5]
+        texgen_t = [0.0, 0.5, 0.0, 0.5]
+
+        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR)
+        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR)
+        glTexGenfv(GL_S, GL_OBJECT_PLANE, texgen_s, 0);
+        glTexGenfv(GL_T, GL_OBJECT_PLANE, texgen_t, 0);
+        glEnable(GL_TEXTURE_GEN_S)
+        glEnable(GL_TEXTURE_GEN_T)
+        # glTexGenfv(GL_S, GL_OBJECT_PLANE, zPlane)
+        # glTexGenfv(GL_T, GL_OBJECT_PLANE, zPlane)
 
     def configureGlutEvents(self):       
         glutDisplayFunc(self.glutDisplay)
@@ -210,6 +244,11 @@ class Window:
         glTranslatef(-self.position['x']*2, -self.position['y']*2, -self.position['z']*2) 
         rotate(self.position['x'], self.position['y'], self.position['z'], self.rotation, 'y')
 
+
+            # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+            # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glDisable(GL_TEXTURE_2D)
+
         glPushMatrix()
         glColor3f(0.0, 1.0, 0.0)
         glBegin(GL_POLYGON)
@@ -217,10 +256,15 @@ class Window:
         glVertex3f(60.0,    -0.5, -60.0)
         glVertex3f(60.0,    -0.5, 60.0)
         glVertex3f(-60.0,   -0.5, 60.0)
+        glTexCoord(-60.0, -60.0)
+        glTexCoord(60.0, -60.0)
+        glTexCoord(60.0, 60.0)
+        glTexCoord(-60.0, 60.0)
         glEnd()
         glPopMatrix()
 
         for obj in self.objects:
+            obj.load_texture()
             obj.draw(True)
 
         glPopMatrix()

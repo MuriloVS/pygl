@@ -2,6 +2,8 @@ from OpenGL.GL import *
 from OpenGL.GL.images import ImageInputConverter
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+from PIL import Image
+import numpy
 import math
 
 class Basic:
@@ -12,6 +14,22 @@ class Basic:
         self.size       = size
         self.color      = color
         self.type       = 'basic'
+
+    def set_texture(self, file_name):
+        grass_image = Image.open(file_name).convert('RGBA')
+        self.image = {
+            "height":   grass_image.height,
+            "width":    grass_image.width,
+            "data":     numpy.array(list(grass_image.getdata()), numpy.uint8)
+        }
+    
+    def load_texture(self):
+        if(hasattr(self,'image')):
+            glEnable(GL_TEXTURE_2D)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.image['width'], self.image['height'], 0, GL_RGBA, GL_UNSIGNED_BYTE, self.image['data'])
+            glGenerateMipmap(GL_TEXTURE_2D)
+        else:
+            glDisable(GL_TEXTURE_2D)
     
     def move(self, x, y, z):
         self.position_x += x
