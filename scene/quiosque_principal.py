@@ -99,7 +99,7 @@ def generate_group_quiosque_principal(position_x, position_y, position_z):
     # quiosque.addObject(coluna_08)
 
     # # X, Y, Z, RAIO, ALTURA, COR
-    pilar = Cylinder(0.0, 0.35, 0.0, 0.7, 2.5, COLORS['WHITE'])
+    pilar = Cylinder(0.0, 0.5, 0.0, 0.7, 2.5, COLORS['WHITE'])
     pilar.setTexture(TEXTURES['CONCRETO'])
     quiosque.addObject(pilar)
     

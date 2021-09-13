@@ -63,7 +63,7 @@ class Vertex(Basic):
                 normal = self.normals[index]
                 glNormal3f(normal[0], normal[1], normal[2])
             else:
-                glNormal3f(0, 1, 0)
+                glNormal3f(0.5, 0.7, 0.5)
             if self.tex_coords != None:
                 coord = self.tex_coords[index]
                 glTexCoord(coord[0], coord[1])
