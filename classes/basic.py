@@ -13,7 +13,9 @@ class Basic:
         self.position_z = position_z
         self.size       = size
         self.color      = color
+        self.opacity    = 1
         self.type       = 'basic'
+        self.lightning  = True
 
     def setTexture(self, texture):#file_name):
         #grass_image = Image.open(file_name).convert('RGBA')
@@ -23,6 +25,12 @@ class Basic:
         #     "data":     numpy.array(list(grass_image.getdata()), numpy.uint8)
         # }
         self.image = texture
+
+    def setOpacity(self, opacity):
+        self.opacity = opacity
+
+    def setLightning(self, lightning):
+        self.lightning = lightning
     
     def load_texture(self):
         if(hasattr(self,'image')):

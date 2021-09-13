@@ -13,7 +13,7 @@ def load_texture(path):
 TEXTURES = {
     'PALHA':    load_texture('textures/palha.jpg'),
     'MADEIRA':  load_texture('textures/wood.jpg'),
-    'CONCRETO': load_texture('textures/concrete.jpeg'),
+    'CONCRETO': load_texture('textures/concrete.jpg'),
     'GRAMA':    load_texture('textures/grass.jpg'),
-    'AGUA':     load_texture('textures/agua.jpeg')
+    'AGUA':     load_texture('textures/water.jpeg')
 }

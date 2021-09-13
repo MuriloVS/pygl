@@ -13,6 +13,8 @@ class Vertex(Basic):
         self.gl_mode    = gl_mode
         self.size       = 0
         self.tex_coords = tex_coords
+        self.opacity    = 1
+        self.lightning  = True
 
     def setMode(self, gl_mode):
         self.gl_mode = gl_mode
@@ -45,6 +47,15 @@ class Vertex(Basic):
             glPushMatrix()
             glTranslatef(self.position_x, self.position_y, self.position_z)
 
+        if not self.lightning:
+            glDisable(GL_LIGHTING)
+            glDisable(GL_LIGHT0)
+        else:
+            glEnable(GL_LIGHTING)
+            glEnable(GL_LIGHT0)
+
+
+        glColor([1.0, 1.0, 1.0, self.opacity])
         glBegin(self.gl_mode)
         for index, vertex in enumerate(self.vertexes):
             glVertex3f(vertex[0], vertex[1], vertex[2])

@@ -11,12 +11,13 @@ from textures.loader import TEXTURES
 
 window = Window('OpenGL Practice', 500, 500)
 
-agua = generate_vertex_agua(0.0, -0.2, 0.0, 6.0)
 
-gramado = generate_group_gramado(0.5, 0.0, 0.0)
+agua        = generate_vertex_agua(0.0, -0.7, 0.0, 6.0)
+gramado     = generate_group_gramado(0.5, 0.0, 0.0)
 quiosque_01 = generate_group_quiosque(0.0, 0.0, -3.0)
 quiosque_02 = generate_group_quiosque(1.0, 0.0, -4.0)
 
+agua.setLightning(False)
 window.addObject(agua)
 window.addObject(gramado)
 window.addObject(quiosque_01)

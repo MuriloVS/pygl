@@ -33,13 +33,13 @@ def generate_group_gramado(position_x, position_y, position_z):
     gramado.addObject(entrada_lago_sup)
 
     fundo_lago = Vertex(
-        0.0, -0.5, 0.0,
+        0.0, 0.0, 0.0,
         GL_POLYGON,
         [
-            [0.5, -0.5, 0.0],
-            [0.5, -0.5, -.8],
-            [1.5, -0.5, -.8],
-            [1.5, -0.5, 0.0],
+            [0.5, -1.0, 0.0],
+            [0.5, -1.0, -.8],
+            [1.5, -1.0, -.8],
+            [1.5, -1.0, 0.0],
         ]
     )
     fundo_lago.setTexture(TEXTURES['GRAMA'])

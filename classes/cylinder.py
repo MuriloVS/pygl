@@ -10,6 +10,8 @@ class Cylinder(Basic):
         self.color      = color
         self.height     = height
         self.type       = 'cilinder'
+        self.opacity    = 1
+        self.lightning  = True
 
     def draw(self, own_matrix):
         if own_matrix:

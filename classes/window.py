@@ -96,6 +96,7 @@ class Window:
         }
         self.jump_buffer = 0
         self.rotation = 0
+        self.bobbing = 'up'
         # Inicalização OpenGL
         if initialize:
             self.initialize()
@@ -300,25 +301,39 @@ class Window:
 
     def glutMovement(self):
 
-        if self.jump_buffer > 0:
-            self.position['y'] += 0.015 * self.jump_buffer/200 if self.jump_buffer > 600 else - 0.010 * 600/self.jump_buffer
-            self.jump_buffer -= 1
-            if self.position['y'] <= 0:
-                self.position['y'] = 0
-                self.jump_buffer = 0
+        speed = 2.0 if b' ' in self.key_buffer else 1.0
+
+        # if self.jump_buffer > 0:
+        #     self.position['y'] += 0.015 * self.jump_buffer/200 if self.jump_buffer > 600 else - 0.010 * 600/self.jump_buffer
+        #     self.jump_buffer -= 1
+        #     if self.position['y'] <= 0:
+        #         self.position['y'] = 0
+        #         self.jump_buffer = 0
         
-        self.jump_buffer = 800 if (b' ' in self.key_buffer and self.jump_buffer <= 0) else self.jump_buffer
+        # self.jump_buffer = 800 if (b' ' in self.key_buffer and self.jump_buffer <= 0) else self.jump_buffer
 
         self.rotation = self.rotation - 360 if self.rotation > 360 else self.rotation
 
-        horizontal_movement = 0.002 if (b'd' in self.key_buffer) else -0.002 if (b'a' in self.key_buffer) else 0
-        vertical_movement   = 0.002 if (b'w' in self.key_buffer) else -0.002 if (b's' in self.key_buffer) else 0
+        horizontal_movement = 0.006 if (b'd' in self.key_buffer) else -0.006 if (b'a' in self.key_buffer) else 0
+        vertical_movement   = 0.006 if (b'w' in self.key_buffer) else -0.006 if (b's' in self.key_buffer) else 0
 
         x_movement = vertical_movement * math.sin(math.radians(self.rotation)) + horizontal_movement * math.sin(math.radians(self.rotation - 90))
         z_movement = vertical_movement * math.cos(math.radians(self.rotation)) + horizontal_movement * math.cos(math.radians(self.rotation - 90))
 
         can_walk_x = True
         can_walk_z = True
+
+        if self.bobbing == 'up':
+            if self.position['y'] < 0.008:
+                self.position['y'] += 0.0007 * speed
+            else:
+                self.bobbing = 'down'
+
+        if self.bobbing == 'down':
+            if self.position['y'] > 0:
+                self.position['y'] -= 0.00035 * speed
+            if self.position['y'] <= 0 and (x_movement != 0 or z_movement != 0):
+                self.bobbing = 'up'
 
         # for obj in self.objects:
         #     x = self.position['x'] + x_movement
@@ -331,16 +346,16 @@ class Window:
         
 
 
-        self.position['x'] -= x_movement if can_walk_x == True else 0
-        self.position['z'] -= z_movement if can_walk_z == True else 0
+        self.position['x'] -= x_movement * speed if can_walk_x == True else 0
+        self.position['z'] -= z_movement * speed if can_walk_z == True else 0
 
             # in_x = self.position['x'] < obj.position_x + obj.size*1.5 and self.position['x'] > obj.position_x - obj.size*1.5
             # in_z = self.position['z'] < obj.position_z + obj.size*1.5 and self.position['z'] > obj.position_z - obj.size*1.5
             # in_y = self.position['y'] < obj.position_y + obj.size*1.5 and self.position['y'] > obj.position_y - obj.size*1.5
             # if not (in_x and in_z and in_y):
 
-        #self.position['y']  -= (0.002)    if (b'z' in self.key_buffer) else (-0.002)    if (b'x' in self.key_buffer) else 0 
-        self.rotation       += (0.25)     if (b'q' in self.key_buffer) else (-0.25)     if (b'e' in self.key_buffer) else 0 
+        self.position['y']  -= (0.08*speed)    if (b'z' in self.key_buffer) else ((-0.08*speed)    if (b'x' in self.key_buffer) else 0)
+        self.rotation       += (0.8*speed)     if (b'q' in self.key_buffer) else ((-0.8*speed)     if (b'e' in self.key_buffer) else 0)
 
     def addObject(self, obj):
         print('🧊 Adding object on \t['+str(obj.position_x)+'\t'+str(obj.position_y)+'\t'+str(obj.position_z)+'] \t "'+obj.type+'"')
