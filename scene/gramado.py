@@ -10,10 +10,10 @@ def generate_group_gramado(position_x, position_y, position_z):
         0.0, -0.5, 0.0,
         GL_POLYGON,
         [
-            [0.0, 0.0,  0.0],
+            [0.0, 0.0,  6.0],
             [0.0, 0.0, -0.8],
             [0.5, -0.5, -0.8],
-            [0.5, -0.5, 0.0],
+            [0.5, -0.5, 6.0],
         ]
     )
     entrada_lago_esq.setTexture(TEXTURES['GRAMA'])
@@ -24,8 +24,8 @@ def generate_group_gramado(position_x, position_y, position_z):
         GL_POLYGON,
         [
             [0.5, 0.0, -1.3],
-            [3, 0.0, -1.3],
-            [3, -0.5,-.8],
+            [6, 0.0, -1.3],
+            [6, -0.5,-.8],
             [0.5, -0.5, -.8],
         ]
     )
@@ -36,10 +36,10 @@ def generate_group_gramado(position_x, position_y, position_z):
         0.0, 0.0, 0.0,
         GL_POLYGON,
         [
-            [0.5, -1.0, 0.0],
+            [0.5, -1.0, 6.0],
             [0.5, -1.0, -.8],
             [1.5, -1.0, -.8],
-            [1.5, -1.0, 0.0],
+            [1.5, -1.0, 6.0],
         ]
     )
     fundo_lago.setTexture(TEXTURES['GRAMA'])
@@ -61,10 +61,10 @@ def generate_group_gramado(position_x, position_y, position_z):
         0.0, 0.0, 0.0,
         GL_POLYGON,
         [
-            [-5.0, -0.5, 0.0],
+            [-5.0, -0.5, 6.0],
             [-5.0, -0.5, -6.0],
             [0.0, -0.5, -6.0],
-            [0.0, -0.5, 0.0],
+            [0.0, -0.5, 6.0],
         ],
     )
     grama_sup_esq.setTexture(TEXTURES['GRAMA'])
@@ -76,8 +76,8 @@ def generate_group_gramado(position_x, position_y, position_z):
         [
             [0.0, -0.5, -1.3],
             [0.0, -0.5, -6.0],
-            [3.0, -0.5, -6.0],
-            [3.0, -0.5, -1.3],
+            [6.0, -0.5, -6.0],
+            [6.0, -0.5, -1.3],
         ],
     )
     grama_sup_dir.setTexture(TEXTURES['GRAMA'])

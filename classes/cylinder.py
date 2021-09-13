@@ -20,7 +20,7 @@ class Cylinder(Basic):
         glColor3f(self.color[0], self.color[1], self.color[2])
         glTranslatef(self.position_x, self.position_y, self.position_z)
         glRotatef(90, 1.0, 0.0, 0.0)
-        glutSolidCylinder(self.size, self.height, 10, 10)
+        glutSolidCylinder(self.size, self.height, 6, 6)
 
         if own_matrix:
             glPopMatrix()
