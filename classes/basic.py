@@ -15,13 +15,14 @@ class Basic:
         self.color      = color
         self.type       = 'basic'
 
-    def set_texture(self, file_name):
-        grass_image = Image.open(file_name).convert('RGBA')
-        self.image = {
-            "height":   grass_image.height,
-            "width":    grass_image.width,
-            "data":     numpy.array(list(grass_image.getdata()), numpy.uint8)
-        }
+    def setTexture(self, texture):#file_name):
+        #grass_image = Image.open(file_name).convert('RGBA')
+        # self.image = {
+        #     "height":   grass_image.height,
+        #     "width":    grass_image.width,
+        #     "data":     numpy.array(list(grass_image.getdata()), numpy.uint8)
+        # }
+        self.image = texture
     
     def load_texture(self):
         if(hasattr(self,'image')):

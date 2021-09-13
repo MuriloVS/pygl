@@ -2,6 +2,9 @@ import numpy
 from classes.basic import *
 from PIL import Image
 import math
+import sys
+
+testing = (sys.argv[1] == 'dev') if (len(sys.argv) > 1) else False
 
 COLORS = {
     'WHITE': [1.0, 1.0, 1.0],
@@ -147,8 +150,8 @@ class Window:
 
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-        texgen_s = [0.5, 0.0, 0.0, 0.5]
-        texgen_t = [0.0, 0.5, 0.0, 0.5]
+        texgen_s = [0.0, 0.0, 1.0, 0.0]
+        texgen_t = [1.0, 0.0, 0.0, 1.0]
 
         glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR)
         glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR)
@@ -156,12 +159,11 @@ class Window:
         glTexGenfv(GL_T, GL_OBJECT_PLANE, texgen_t, 0);
         glEnable(GL_TEXTURE_GEN_S)
         glEnable(GL_TEXTURE_GEN_T)
-        # glTexGenfv(GL_S, GL_OBJECT_PLANE, zPlane)
-        # glTexGenfv(GL_T, GL_OBJECT_PLANE, zPlane)
 
     def configureGlutEvents(self):       
         glutDisplayFunc(self.glutDisplay)
-        glutIdleFunc(self.glutDisplay)
+        if not testing:
+            glutIdleFunc(self.glutDisplay)
         glutReshapeFunc(self.glutReshape)
         glutKeyboardFunc(self.glutKeyDown)
         glutKeyboardUpFunc(self.glutKeyUp)
@@ -214,17 +216,31 @@ class Window:
         # glEnd()
 
         for obj in self.objects:
-            dot_size = 0.01 * obj.size
-            obj_x = (obj.position_x/map_max)*size
-            obj_y = -(obj.position_z/map_max)*size
-            color = [obj.color[0]+0.2, obj.color[1]+0.2, obj.color[2]+0.2]
-            glColor(color)
-            glBegin(GL_POLYGON)
-            glVertex3f(obj_x-dot_size , obj_y-dot_size, -dist)
-            glVertex3f(obj_x-dot_size , obj_y+dot_size, -dist)
-            glVertex3f(obj_x+dot_size , obj_y+dot_size, -dist)
-            glVertex3f(obj_x+dot_size , obj_y-dot_size, -dist)
-            glEnd()
+            if obj.type != 'group':
+                dot_size = 0.01 * obj.size
+                obj_x = (obj.position_x/map_max)*size
+                obj_y = -(obj.position_z/map_max)*size
+                color = [obj.color[0]+0.2, obj.color[1]+0.2, obj.color[2]+0.2]
+                glColor(color)
+                glBegin(GL_POLYGON)
+                glVertex3f(obj_x-dot_size , obj_y-dot_size, -dist)
+                glVertex3f(obj_x-dot_size , obj_y+dot_size, -dist)
+                glVertex3f(obj_x+dot_size , obj_y+dot_size, -dist)
+                glVertex3f(obj_x+dot_size , obj_y-dot_size, -dist)
+                glEnd()
+            else:
+                for sub_obj in obj.objects:
+                    dot_size = 0.01 * sub_obj.size
+                    obj_x = (sub_obj.position_x/map_max)*size
+                    obj_y = -(sub_obj.position_z/map_max)*size
+                    color = [sub_obj.color[0]+0.2, sub_obj.color[1]+0.2, sub_obj.color[2]+0.2]
+                    glColor(color)
+                    glBegin(GL_POLYGON)
+                    glVertex3f(obj_x-dot_size , obj_y-dot_size, -dist)
+                    glVertex3f(obj_x-dot_size , obj_y+dot_size, -dist)
+                    glVertex3f(obj_x+dot_size , obj_y+dot_size, -dist)
+                    glVertex3f(obj_x+dot_size , obj_y-dot_size, -dist)
+                    glEnd()
 
 
         glEnable(GL_LIGHTING)
@@ -249,22 +265,9 @@ class Window:
             # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glDisable(GL_TEXTURE_2D)
 
-        glPushMatrix()
-        glColor3f(0.0, 1.0, 0.0)
-        glBegin(GL_POLYGON)
-        glVertex3f(-60.0,   -0.5, -60.0)
-        glNormal3f(0,1,0)
-        glVertex3f(60.0,    -0.5, -60.0)
-        glNormal3f(0,1,0)
-        glVertex3f(60.0,    -0.5, 60.0)
-        glNormal3f(0,1,0)
-        glVertex3f(-60.0,   -0.5, 60.0)
-        glNormal3f(0,1,0)
-        glEnd()
-        glPopMatrix()
-
         for obj in self.objects:
-            obj.load_texture()
+            if obj.type != 'group':
+                obj.load_texture()
             obj.draw(True)
 
         glPopMatrix()
@@ -292,7 +295,8 @@ class Window:
         self.key_buffer.append(key)
 
     def glutKeyUp(self, key, x, y):
-        self.key_buffer.remove(key)
+        if key in self.key_buffer:
+            self.key_buffer.remove(key)
 
     def glutMovement(self):
 
@@ -336,7 +340,8 @@ class Window:
             # if not (in_x and in_z and in_y):
 
         #self.position['y']  -= (0.002)    if (b'z' in self.key_buffer) else (-0.002)    if (b'x' in self.key_buffer) else 0 
-        self.rotation       += (0.15)     if (b'q' in self.key_buffer) else (-0.15)     if (b'e' in self.key_buffer) else 0 
+        self.rotation       += (0.25)     if (b'q' in self.key_buffer) else (-0.25)     if (b'e' in self.key_buffer) else 0 
 
     def addObject(self, obj):
+        print('🧊 Adding object on \t['+str(obj.position_x)+'\t'+str(obj.position_y)+'\t'+str(obj.position_z)+'] \t "'+obj.type+'"')
         self.objects.append(obj)
