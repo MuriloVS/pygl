@@ -1,6 +1,6 @@
 from classes.basic import *
 
-class Group:
+class Group(Basic):
     def __init__(self, name, position_x, position_y, position_z):
         self.name = name
         self.type = 'group'
@@ -20,6 +20,7 @@ class Group:
         for obj in self.objects:
             if obj.type != 'group':
                 obj.load_texture()
+                obj.animate()
             obj.draw(own_matrix)
 
         if own_matrix:

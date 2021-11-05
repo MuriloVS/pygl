@@ -54,7 +54,6 @@ class Vertex(Basic):
             glEnable(GL_LIGHTING)
             glEnable(GL_LIGHT0)
 
-
         glColor([1.0, 1.0, 1.0, self.opacity])
         glBegin(self.gl_mode)
         for index, vertex in enumerate(self.vertexes):

@@ -3,17 +3,9 @@ from classes.basic import *
 from PIL import Image
 import math
 import sys
+from classes.colors import *
 
 testing = (sys.argv[1] == 'dev') if (len(sys.argv) > 1) else False
-
-COLORS = {
-    'WHITE': [1.0, 1.0, 1.0],
-    'BLACK': [0.0, 0.0, 0.0],
-    'GREEN': [0.0, 1.0, 0.0],
-    'BLUE':  [0.0, 0.0, 1.0],
-    'BROWN': [1.0, 0.8, 0.6],
-    'SKY':   [0.53, 0.81, 0.92]
-}
 
 def translate(x, y, z):
     matrix = [
@@ -79,7 +71,7 @@ class Window:
             "x": 0,
             "y": 0
         }
-        self.ligh_position  = [0.0, 1.0, 0.0, 13.0]
+        self.ligh_position  = [1.5, 2.0, -1.5, 13.0]
         self.materials      = {
             "AMBIENT":  [0.2, 0.2, 0.2, 1.0],
             "DIFUSE":   [0.1, 0.1, 0.1, 1.0],
@@ -129,11 +121,15 @@ class Window:
         glMaterialfv(GL_FRONT, GL_AMBIENT, self.materials['AMBIENT'])
         glMaterialfv(GL_FRONT, GL_DIFFUSE, self.materials['DIFUSE'])
         glMaterialfv(GL_FRONT, GL_SPECULAR, self.materials['SPECULAR'])
-        glMaterialf(GL_FRONT, GL_SHININESS, 5.0)
+        glMaterialf(GL_FRONT, GL_SHININESS, 3.0)
         # Definindo e habilitando luzes
+        glLightfv(GL_LIGHT0, GL_AMBIENT,  [0.0, 0.0, 0.0, 1.0])
+        glLightfv(GL_LIGHT0, GL_DIFFUSE,  [1.0, 1.0, 0.9, 1.0])
+        glLightfv(GL_LIGHT0, GL_SPECULAR, [1.0, 1.0, 1.0, 1.0])
         glLightfv(GL_LIGHT0, GL_POSITION, self.ligh_position)
         glEnable(GL_LIGHTING)
         glEnable(GL_LIGHT0)
+        glEnable(GL_DEPTH_TEST)
         # Definindo e habilitando modo de coloração
         glColorMaterial(GL_FRONT, GL_DIFFUSE)
         glEnable(GL_COLOR_MATERIAL)
@@ -160,6 +156,7 @@ class Window:
         glTexGenfv(GL_T, GL_OBJECT_PLANE, texgen_t, 0);
         glEnable(GL_TEXTURE_GEN_S)
         glEnable(GL_TEXTURE_GEN_T)
+
 
     def configureGlutEvents(self):       
         glutDisplayFunc(self.glutDisplay)
@@ -218,6 +215,7 @@ class Window:
 
         for obj in self.objects:
             if obj.type != 'group':
+                print(obj.type)
                 dot_size = 0.01 * obj.size
                 obj_x = (obj.position_x/map_max)*size
                 obj_y = -(obj.position_z/map_max)*size
@@ -231,6 +229,7 @@ class Window:
                 glEnd()
             else:
                 for sub_obj in obj.objects:
+                    print(sub_obj.type)
                     dot_size = 0.01 * sub_obj.size
                     obj_x = (sub_obj.position_x/map_max)*size
                     obj_y = -(sub_obj.position_z/map_max)*size
@@ -269,13 +268,14 @@ class Window:
         for obj in self.objects:
             if obj.type != 'group':
                 obj.load_texture()
+            obj.animate()
             obj.draw(True)
 
         glPopMatrix()
         glPopMatrix()
 
         # Interface
-        self.drawMinimap()
+        #self.drawMinimap()
 
         glutSwapBuffers()
 
@@ -283,7 +283,13 @@ class Window:
         glViewport(0, 0, GLsizei(width), GLsizei(height))
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        glFrustum (-0.5, 0.5, -0.5, 0.5, 0.5, 20)
+        left    = -0.5
+        right   = 0.5
+        top     = -0.5
+        bottom  = 0.25
+        near    = 0.5
+        far     = 10
+        glFrustum (left, right, top, bottom, near, far)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
@@ -358,5 +364,8 @@ class Window:
         self.rotation       += (0.8*speed)     if (b'q' in self.key_buffer) else ((-0.8*speed)     if (b'e' in self.key_buffer) else 0)
 
     def addObject(self, obj):
-        print('🧊 Adding object on \t['+str(obj.position_x)+'\t'+str(obj.position_y)+'\t'+str(obj.position_z)+'] \t "'+obj.type+'"')
+        if obj.type == 'group':
+            print('🧊 Adding GROUP on \t['+str(obj.position_x)+'\t'+str(obj.position_y)+'\t'+str(obj.position_z)+'] \t "'+obj.name+'"')
+        else:
+            print('🧊 Adding OBJECT on \t['+str(obj.position_x)+'\t'+str(obj.position_y)+'\t'+str(obj.position_z)+'] \t "'+obj.type+'"')
         self.objects.append(obj)
