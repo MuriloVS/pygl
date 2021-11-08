@@ -12,7 +12,7 @@ from classes.window import *
 from classes.vertex import *
 from textures.loader import TEXTURES
 
-window = Window('OpenGL Practice', 900, 900)
+window = Window('OpenGL Practice', 450, 450)
 
 agua        = generate_vertex_agua(0.0, -0.7, 0.0, 6.0)
 gramado     = generate_group_gramado(1, 0.0, -0.5)
@@ -33,9 +33,8 @@ mesa_09     = generate_group_mesa(0.1, -0.22, -2.6)
 mesa_10     = generate_group_mesa(0.0, -0.22, -2.6)
 
 poste_01    = generate_group_poste(2.2, -0.22, -2.3)
-poste_02    = generate_group_poste(2.5, -0.22, -2.3)
-poste_03    = generate_group_poste(2.8, -0.22, -2.3)
-poste_04    = generate_group_poste(3.1, -0.22, -2.3)
+poste_02    = generate_group_poste(3.2, -0.22, -2.3)
+poste_03    = generate_group_poste(4.2, -0.22, -2.3)
 
 
 agua.setAnimation(
@@ -59,7 +58,6 @@ window.addObject(mesa_03)
 window.addObject(poste_01)
 window.addObject(poste_02)
 window.addObject(poste_03)
-window.addObject(poste_04)
 
 print('✔️ Loading complete! Initalizing...')
 window.configureOpenGl()
