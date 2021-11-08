@@ -86,7 +86,7 @@ class Window:
             "y": 0,
             "z": 0
         }
-        self.jump_buffer = 0
+
         self.rotation = 0
         self.bobbing = 'up'
         # Inicalização OpenGL
@@ -137,11 +137,6 @@ class Window:
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         # # Configurações e habilitação de texturas
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        # glEnable(GL_TEXTURE_2D)
         glDisable(GL_TEXTURE_GEN_S)
         glDisable(GL_TEXTURE_GEN_T)
 
@@ -168,86 +163,7 @@ class Window:
         glutMotionFunc(self.glutMouseMove)
         glutMainLoop()
     
-    def drawMinimap(self):
-        glPushMatrix()
-
-        glDisable(GL_LIGHTING)
-        glDisable(GL_LIGHT0)
-
-        map_max = 9
-
-        size = 0.15
-        dist = 0.52
-        glTranslatef(-0.3, +0.3, 0.0)
-        glColor([0.0, 0.0, 0.0, 0.75])
-        glBegin(GL_POLYGON)
-        glVertex3f(-size , -size, -dist)
-        glVertex3f(-size , size, -dist)
-        glVertex3f(size , size, -dist)
-        glVertex3f(size , -size, -dist)
-        glEnd()
-
-        player_x = (self.position['x']/map_max)*size
-        player_y = -(self.position['z']/map_max)*size
-
-        dist = 0.51
-        dot_size = 0.005
-        glColor([0.6, 1.0, 0.6, 1])
-        glPushMatrix()
-        
-        glTranslatef(player_x, player_y, 0.0)
-        glRotatef(self.rotation, 0.0, 0.0, 1.0)
-        glTranslatef(-player_x, -player_y, 0.0)
-
-        glBegin(GL_POLYGON)
-        glVertex3f(player_x-0.009,   player_y-0.0095,     -0.51)
-        glVertex3f(player_x+0.009,   player_y-0.0095,     -0.51)
-        glVertex3f(player_x+0.0,    player_y+0.0095,     -0.51)
-        glEnd()
-
-        glPopMatrix()
-        # glBegin(GL_POLYGON)
-        # glVertex3f(player_x-dot_size , player_y-dot_size, -dist)
-        # glVertex3f(player_x-dot_size , player_y+dot_size, -dist)
-        # glVertex3f(player_x+dot_size , player_y+dot_size, -dist)
-        # glVertex3f(player_x+dot_size , player_y-dot_size, -dist)
-        # glEnd()
-
-        for obj in self.objects:
-            if obj.type != 'group':
-                print(obj.type)
-                dot_size = 0.01 * obj.size
-                obj_x = (obj.position_x/map_max)*size
-                obj_y = -(obj.position_z/map_max)*size
-                color = [obj.color[0]+0.2, obj.color[1]+0.2, obj.color[2]+0.2]
-                glColor(color)
-                glBegin(GL_POLYGON)
-                glVertex3f(obj_x-dot_size , obj_y-dot_size, -dist)
-                glVertex3f(obj_x-dot_size , obj_y+dot_size, -dist)
-                glVertex3f(obj_x+dot_size , obj_y+dot_size, -dist)
-                glVertex3f(obj_x+dot_size , obj_y-dot_size, -dist)
-                glEnd()
-            else:
-                for sub_obj in obj.objects:
-                    print(sub_obj.type)
-                    dot_size = 0.01 * sub_obj.size
-                    obj_x = (sub_obj.position_x/map_max)*size
-                    obj_y = -(sub_obj.position_z/map_max)*size
-                    color = [sub_obj.color[0]+0.2, sub_obj.color[1]+0.2, sub_obj.color[2]+0.2]
-                    glColor(color)
-                    glBegin(GL_POLYGON)
-                    glVertex3f(obj_x-dot_size , obj_y-dot_size, -dist)
-                    glVertex3f(obj_x-dot_size , obj_y+dot_size, -dist)
-                    glVertex3f(obj_x+dot_size , obj_y+dot_size, -dist)
-                    glVertex3f(obj_x+dot_size , obj_y-dot_size, -dist)
-                    glEnd()
-
-
-        glEnable(GL_LIGHTING)
-        glEnable(GL_LIGHT0)
-
-        glPopMatrix()
-
+    
     def glutDisplay(self):
         self.glutMovement()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) 
@@ -260,9 +176,6 @@ class Window:
         glTranslatef(-self.position['x']*2, -self.position['y']*2, -self.position['z']*2) 
         rotate(self.position['x'], self.position['y'], self.position['z'], self.rotation, 'y')
 
-
-            # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
-            # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glDisable(GL_TEXTURE_2D)
 
         for obj in self.objects:
@@ -273,9 +186,6 @@ class Window:
 
         glPopMatrix()
         glPopMatrix()
-
-        # Interface
-        #self.drawMinimap()
 
         glutSwapBuffers()
 
@@ -309,15 +219,6 @@ class Window:
 
         speed = 2.0 if b' ' in self.key_buffer else 1.0
 
-        # if self.jump_buffer > 0:
-        #     self.position['y'] += 0.015 * self.jump_buffer/200 if self.jump_buffer > 600 else - 0.010 * 600/self.jump_buffer
-        #     self.jump_buffer -= 1
-        #     if self.position['y'] <= 0:
-        #         self.position['y'] = 0
-        #         self.jump_buffer = 0
-        
-        # self.jump_buffer = 800 if (b' ' in self.key_buffer and self.jump_buffer <= 0) else self.jump_buffer
-
         self.rotation = self.rotation - 360 if self.rotation > 360 else self.rotation
 
         horizontal_movement = 0.006 if (b'd' in self.key_buffer) else -0.006 if (b'a' in self.key_buffer) else 0
@@ -341,24 +242,8 @@ class Window:
             if self.position['y'] <= 0 and (x_movement != 0 or z_movement != 0):
                 self.bobbing = 'up'
 
-        # for obj in self.objects:
-        #     x = self.position['x'] + x_movement
-        #     z = self.position['z'] + z_movement
-        #     print(can_walk_x)
-        #     print(can_walk_z)
-        #     can_walk_x = can_walk_x and obj.colliding_x(x)
-        #     can_walk_z = can_walk_z and obj.colliding_z(z)
-
-        
-
-
         self.position['x'] -= x_movement * speed if can_walk_x == True else 0
         self.position['z'] -= z_movement * speed if can_walk_z == True else 0
-
-            # in_x = self.position['x'] < obj.position_x + obj.size*1.5 and self.position['x'] > obj.position_x - obj.size*1.5
-            # in_z = self.position['z'] < obj.position_z + obj.size*1.5 and self.position['z'] > obj.position_z - obj.size*1.5
-            # in_y = self.position['y'] < obj.position_y + obj.size*1.5 and self.position['y'] > obj.position_y - obj.size*1.5
-            # if not (in_x and in_z and in_y):
 
         self.position['y']  -= (0.08*speed)    if (b'z' in self.key_buffer) else ((-0.08*speed)    if (b'x' in self.key_buffer) else 0)
         self.rotation       += (0.8*speed)     if (b'q' in self.key_buffer) else ((-0.8*speed)     if (b'e' in self.key_buffer) else 0)

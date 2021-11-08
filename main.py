@@ -24,7 +24,18 @@ mesa_01     = generate_group_mesa(-0.5, -0.22, -1.8)
 mesa_02     = generate_group_mesa(-1.7, -0.22, -3.1)
 mesa_03     = generate_group_mesa(0.7, -0.22, -2.6)
 
-poste       = generate_group_poste(2.2, -0.22, -2.3)
+mesa_04     = generate_group_mesa(0.6, -0.22, -2.6)
+mesa_05     = generate_group_mesa(0.5, -0.22, -2.6)
+mesa_06     = generate_group_mesa(0.4, -0.22, -2.6)
+mesa_07     = generate_group_mesa(0.3, -0.22, -2.6)
+mesa_08     = generate_group_mesa(0.2, -0.22, -2.6)
+mesa_09     = generate_group_mesa(0.1, -0.22, -2.6)
+mesa_10     = generate_group_mesa(0.0, -0.22, -2.6)
+
+poste_01    = generate_group_poste(2.2, -0.22, -2.3)
+poste_02    = generate_group_poste(2.5, -0.22, -2.3)
+poste_03    = generate_group_poste(2.8, -0.22, -2.3)
+poste_04    = generate_group_poste(3.1, -0.22, -2.3)
 
 
 agua.setAnimation(
@@ -44,7 +55,11 @@ window.addObject(mesa_01)
 window.addObject(mesa_02)
 window.addObject(mesa_03)
 
-window.addObject(poste)
+
+window.addObject(poste_01)
+window.addObject(poste_02)
+window.addObject(poste_03)
+window.addObject(poste_04)
 
 print('✔️ Loading complete! Initalizing...')
 window.configureOpenGl()
