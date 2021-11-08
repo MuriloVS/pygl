@@ -105,6 +105,7 @@ class Window:
         # Inicializando Glut
         glutInit()
         # Definindo modo de exibição
+        glRenderMode(GL_RENDER)
         glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH)
         glutInitWindowSize(self.width, self.height)
         glutInitWindowPosition(100, 100)
