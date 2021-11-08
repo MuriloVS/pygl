@@ -20,9 +20,6 @@ class Basic:
     def setTexture(self, texture):#file_name):
         self.image = texture
 
-    def setOpacity(self, opacity):
-        self.opacity = opacity
-
     def setLightning(self, lightning):
         self.lightning = lightning
     
