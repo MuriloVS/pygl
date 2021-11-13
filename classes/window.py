@@ -77,6 +77,8 @@ class Window:
             "DIFUSE":   [0.1, 0.1, 0.1, 1.0],
             "SPECULAR": [0.1, 0.1, 0.1, 1.0]
         }
+        # Configuração de Projeção
+        self.projection = "frustum"
         # Configurações de texturas
         self.textures = []
         # Configurações próprias
@@ -166,6 +168,7 @@ class Window:
     
     
     def glutDisplay(self):
+        self.glutChangeProjection()
         self.glutMovement()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) 
 
@@ -194,15 +197,34 @@ class Window:
         glViewport(0, 0, GLsizei(width), GLsizei(height))
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        left    = -0.5
-        right   = 0.5
-        top     = -0.5
-        bottom  = 0.25
-        near    = 0.5
-        far     = 10
-        glFrustum (left, right, top, bottom, near, far)
+
+        if self.projection == "frustum":
+            left    = -0.5
+            right   = 0.5
+            top     = -0.5
+            bottom  = 0.25
+            near    = 0.5
+            far     = 10
+            glFrustum (left, right, top, bottom, near, far)
+
+        else: #self.projection == "ortho":
+            left    = -0.5*4
+            right   = 0.5*4
+            top     = -0.5*3
+            bottom  = 0.25*3
+            near    = 0.5
+            far     = 8
+            glOrtho (left, right, top, bottom, near, far)
+
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+
+    def glutChangeProjection(self):
+        if b'o' in self.key_buffer:
+            self.projection = 'ortho'
+        if b'p' in self.key_buffer:
+            self.projection = 'frustum'
+        self.glutReshape(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT))
 
     def glutMouseMove(self, x, y):
         x_diff = self.mouse_pos['x'] - x
