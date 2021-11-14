@@ -6,6 +6,7 @@ from scene.agua import generate_vertex_agua
 from scene.quiosque_principal import generate_group_quiosque_principal
 from scene.quiosque_secundario import generate_group_quiosque_secundario
 from scene.gramado import generate_group_gramado
+from scene.pipa import generate_dda_pipa
 from PIL import Image
 import numpy as np
 from classes.window import *
@@ -18,7 +19,6 @@ agua        = generate_vertex_agua(0.0, -0.7, 0.0, 6.0)
 gramado     = generate_group_gramado(1, 0.0, -0.5)
 quiosque_01 = generate_group_quiosque_principal(-0.5, 0.0001, -3.1)
 quiosque_02 = generate_group_quiosque_secundario(0.5, 0.0, -4.1)
-
 
 mesa_01     = generate_group_mesa(-0.5, -0.22, -1.8)
 mesa_02     = generate_group_mesa(-1.7, -0.22, -3.1)
@@ -36,6 +36,9 @@ poste_01    = generate_group_poste(2.2, -0.22, -2.3)
 poste_02    = generate_group_poste(3.2, -0.22, -2.3)
 poste_03    = generate_group_poste(4.2, -0.22, -2.3)
 
+pipa1       = generate_dda_pipa(0.0, -0.5, 1, [0.0, 0.0, 1.0])
+pipa2       = generate_dda_pipa(-0.5, -0.5, 0.5, [0.0, 1.0, 0.0])
+pipa3       = generate_dda_pipa(0.5, -0.5, 0, [1.0, 0.0, 0.0])
 
 agua.setAnimation(
     0.001,
@@ -54,10 +57,13 @@ window.addObject(mesa_01)
 window.addObject(mesa_02)
 window.addObject(mesa_03)
 
-
 window.addObject(poste_01)
 window.addObject(poste_02)
 window.addObject(poste_03)
+
+window.addObject(pipa1)
+window.addObject(pipa2)
+window.addObject(pipa3)
 
 print('✔️ Loading complete! Initalizing...')
 window.configureOpenGl()
