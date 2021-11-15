@@ -9,7 +9,7 @@ A proposta deste trabalho é utilizar esta tecnologia para modelar, em 3D, um am
 O ambiente escolhido para a modelagem foram os dois quiosques próximos ao Centro de Convivência da FURG. Conforme a implantação do projeto foi evoluindo, decidiu-se também acrescentar o lago que fica próximo aos quiosques, as mesas de madeira e também os postes de luz próximos do quiosque.
 
 ## 📽️ Link dos vídeos explicativos
-- www.youtube.com.br
+- www.youtube.com
 
 ## ⚙️ Como usar
 ### Requisitos
