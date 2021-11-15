@@ -45,7 +45,7 @@ class DDA(Basic):
 		dy = y2 - y1
 
 		if abs(dx) > abs(dy):
-			# valores muito pequenos, por isso * 100
+			# valores muito pequenos e inclinação, por isso * 100
 			steps = abs(dx)*100
 		else:
 			steps = abs(dy)*100
